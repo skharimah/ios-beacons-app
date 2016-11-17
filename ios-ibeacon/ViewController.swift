@@ -10,19 +10,14 @@ import UIKit
 import CoreLocation
 
 class ViewController: UIViewController, CLLocationManagerDelegate {
-
+    var request = URLRequest(url: URL(string: "http://jsonplaceholder.typicode.com/todos/1")!)
+    let session = URLSession.shared
     
     let locationManager = CLLocationManager()
     let region = CLBeaconRegion(proximityUUID: NSUUID(uuidString: "F3F73797-8720-45A1-9C6A-B105E24D1484")! as UUID, major: 1000, minor: 1012, identifier: "ios_app_aruba")
-    let colors = [
-        54482: UIColor(red: 84/255, green: 77/255, blue: 160/255, alpha: 1),
-        31351: UIColor(red: 255/255, green: 100/255, blue: 220/255, alpha: 1),
-        27327: UIColor(red: 162/255, green: 213/255, blue: 181/255, alpha: 1)
-    ]
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         locationManager.delegate = self
         if (CLLocationManager.authorizationStatus() != CLAuthorizationStatus.authorizedWhenInUse) {
             locationManager.requestWhenInUseAuthorization()
@@ -36,18 +31,41 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     func locationManager(_ manager: CLLocationManager, didRangeBeacons beacons: [CLBeacon], in region: CLBeaconRegion) {
-        print(beacons)
+        
+        request.httpMethod = "GET"
+        
+        let url = "http://beacons.philipjburke.com:5000/get_agenda"
+        var urlWithParams = url
+        
         for beacon in beacons {
-            if(beacon.rssi >= -30) {
-                self.view.backgroundColor = self.colors[54482]
-            } else if (beacon.rssi >= -50 ) {
-                self.view.backgroundColor = self.colors[31351]
-            } else {
-                self.view.backgroundColor = self.colors[27327]
-            }
+            
+            let uuid = beacon.proximityUUID
+            let major = beacon.major
+            let minor = beacon.minor
+            let canvas_id = "self"
+            
+            urlWithParams = url + "?uuid=\(uuid)&canvas_id=\(canvas_id)&major=\(major)&minor=\(minor)"
+            
+            let urlRequest = URL(string: urlWithParams)
+            
+            print(urlRequest)
+            
+            URLSession.shared.dataTask(with:urlRequest!) { (data, response, err) in
+                if err != nil {
+                    print(err)
+                } else {
+                    do {
+                        let parsedJSON = try JSONSerialization.jsonObject(with: data!, options: .allowFragments) as! [String:Any]
+                        print(parsedJSON.description)
+                    } catch let err as NSError {
+                        print(err)
+                    }
+                }
+                
+                }.resume()
         }
+
     }
-
-
+    
 }
 
