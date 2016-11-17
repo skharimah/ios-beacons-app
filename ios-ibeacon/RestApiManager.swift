@@ -44,14 +44,14 @@ class RestApiManager {
     /// Store the "group_name" field value from JSON response into the class' private variable.
     ///
     /// - parameter newGroupName: "group_name" field value to update the class' variable
-    func setGroupName(newGroupName: String) {
+    private func setGroupName(newGroupName: String) {
         self.groupName = newGroupName
     }
     
     /// Store the "canvas_url" field value from JSON response into the class' private variable.
     ///
     /// - parameter newCanvasUrl: "canvas_url" field value to update the class' variable
-    func setCanvasUrl(newCanvasUrl: String) {
+    private func setCanvasUrl(newCanvasUrl: String) {
         self.canvasUrl = newCanvasUrl
     }
     
