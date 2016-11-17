@@ -16,11 +16,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     
     let restApiManager = RestApiManager()
     
-    /*
-    var group_name = String()
-    var json_link = String()
-    */
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         locationManager.delegate = self
@@ -50,11 +45,11 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
             restApiManager.sendHttpRequest(urlWithParams: urlWithParams)
         }
         
-        createLabel(labelText: String(restApiManager.getGroupName()))
-        createButton()
+        createGroupLabel(labelText: String(restApiManager.getGroupName()))
+        createDownloadButton()
     }
     
-    func createLabel(labelText: String) {
+    func createGroupLabel(labelText: String) {
         let label = UILabel(frame: CGRect(x: 0, y: 0, width: 200, height: 200))
         label.center = CGPoint(x: 160, y: 285)
         label.textAlignment = .center
@@ -62,7 +57,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         self.view.addSubview(label)
     }
     
-    func createButton () {
+    func createDownloadButton () {
         let button = UIButton();
         button.setTitle("Download Notes", for: .normal)
         button.setTitleColor(UIColor.blue, for: .normal)
