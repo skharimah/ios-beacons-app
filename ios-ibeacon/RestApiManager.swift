@@ -13,20 +13,16 @@ class RestApiManager {
     private var groupName = String()
     private var canvasUrl = String()
     
-    func getUrlWithParams(baseUrl: String,
-                          uuid: String,
-                          canvasId: String,
-                          major: (Int),
-                          minor: (Int)) -> String {
+    func getUrlWithParams(baseUrl: String, uuid: String, canvasId: String, major: (Int), minor: (Int)) -> String {
         let urlWithParams = baseUrl + "?uuid=\(uuid)&canvas_id=\(canvasId)&major=\(major)&minor=\(minor)"
         return urlWithParams
     }
     
-    func getGroupName(newGroupName: String) -> String {
+    func getGroupName() -> String {
         return self.groupName
     }
     
-    func getCanvasUrl(newCanvasUrl: String) -> String {
+    func getCanvasUrl() -> String {
         return self.canvasUrl
     }
     

@@ -14,8 +14,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     let locationManager = CLLocationManager()
     let region = CLBeaconRegion(proximityUUID: NSUUID(uuidString: "F3F73797-8720-45A1-9C6A-B105E24D1484")! as UUID, major: 1000, minor: 1012, identifier: "ios_app_aruba")
     
+    let restApiManager = RestApiManager()
+    
+    /*
     var group_name = String()
     var json_link = String()
+    */
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,38 +38,19 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didRangeBeacons beacons: [CLBeacon], in region: CLBeaconRegion) {
         
         let url = "http://beacons.philipjburke.com:5000/get_agenda"
-        var urlWithParams = url
         
         for beacon in beacons {
             
-            let uuid = beacon.proximityUUID
+            let uuid = String(describing: beacon.proximityUUID)
             let major = beacon.major
             let minor = beacon.minor
-            let canvas_id = "self"
+            let canvasId = "self"
             
-            urlWithParams = url + "?uuid=\(uuid)&canvas_id=\(canvas_id)&major=\(major)&minor=\(minor)"
-            
-            let urlRequest = URL(string: urlWithParams)
-            
-            URLSession.shared.dataTask(with:urlRequest!) { (data, response, err) in
-                if err != nil {
-                    print(err)
-                } else {
-                    do {
-                        let parsedJSON = try JSONSerialization.jsonObject(with: data!, options: .allowFragments) as! [String:Any]
-                        
-                        self.group_name = parsedJSON["group_name"] as! String
-                        self.json_link = parsedJSON["url"] as! String
-                        
-                    } catch let err as NSError {
-                        print(err)
-                    }
-                }
-                
-                }.resume()
+            let urlWithParams = restApiManager.getUrlWithParams(baseUrl: url, uuid: uuid, canvasId: canvasId, major: (Int)(major), minor: (Int)(minor))
+            restApiManager.sendHttpRequest(urlWithParams: urlWithParams)
         }
         
-        createLabel(labelText: String(self.group_name))
+        createLabel(labelText: String(restApiManager.getGroupName()))
         createButton()
     }
     
@@ -88,8 +73,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     func buttonPressed(sender: UIButton!) {
-        if URL(string: json_link) != nil {
-            UIApplication.shared.openURL(URL(string: json_link)!)
+        if URL(string: restApiManager.getCanvasUrl()) != nil {
+            UIApplication.shared.openURL(URL(string: restApiManager.getCanvasUrl())!)
         }
     }
     
